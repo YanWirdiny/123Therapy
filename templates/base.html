@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}123Therapy{% endblock %} | Couples Therapy</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sage': {
+                            DEFAULT: '#8FAE8B',
+                            light: '#A8C5A5',
+                            dark: '#7A9A76',
+                        },
+                        'sky-soft': '#A8C5D6',
+                        'sand': {
+                            light: '#F5F1EB',
+                            DEFAULT: '#E8E4DF',
+                        },
+                        'warm-white': '#FAF9F6',
+                        'charcoal': '#3D3D3D',
+                        'warm-gray': '#6B6B6B',
+                        'partner-a': '#7EB5A6',
+                        'partner-b': '#D4A5A5',
+                        'ai-therapist': '#B8A9C9',
+                        'crisis': '#E8A598',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Segoe UI', 'system-ui', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Focus styles for accessibility */
+        *:focus-visible {
+            outline: 2px solid #8FAE8B;
+            outline-offset: 2px;
+        }
+
+        /* Chat bubble animations */
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-enter {
+            animation: fadeSlideUp 0.2s ease-out;
+        }
+
+        /* Typing indicator animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 1; }
+        }
+
+        .typing-dot {
+            animation: pulse 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+    </style>
+
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-warm-white text-charcoal min-h-screen">
+    {% block body %}
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-sm border-b border-sand sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <a href="{{ url_for('api.index') }}" class="flex items-center space-x-2">
+                    <span class="text-2xl font-semibold text-sage">123</span>
+                    <span class="text-2xl font-light text-charcoal">Therapy</span>
+                </a>
+
+                <!-- Nav Links -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#about" class="text-warm-gray hover:text-sage transition-colors">About</a>
+                    <a href="#resources" class="text-warm-gray hover:text-sage transition-colors">Resources</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-sand-light border-t border-sand mt-auto">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- About -->
+                <div>
+                    <h3 class="font-semibold text-charcoal mb-3">123Therapy</h3>
+                    <p class="text-warm-gray text-sm">
+                        A safe space for couples to communicate with AI-guided support.
+                    </p>
+                </div>
+
+                <!-- Crisis Resources -->
+                <div>
+                    <h3 class="font-semibold text-charcoal mb-3">Crisis Resources</h3>
+                    <ul class="text-sm text-warm-gray space-y-2">
+                        <li>National Suicide Prevention: <strong>988</strong></li>
+                        <li>Crisis Text Line: Text <strong>HOME</strong> to 741741</li>
+                        <li>Domestic Violence: <strong>1-800-799-7233</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Disclaimer -->
+                <div>
+                    <h3 class="font-semibold text-charcoal mb-3">Important</h3>
+                    <p class="text-warm-gray text-sm">
+                        This service is not a replacement for professional therapy.
+                        If you're in crisis, please contact emergency services.
+                    </p>
+                </div>
+            </div>
+
+            <div class="border-t border-sand mt-8 pt-6 text-center text-sm text-warm-gray">
+                <p>&copy; 2026 123Therapy. For educational purposes only.</p>
+            </div>
+        </div>
+    </footer>
+    {% endblock %}
+
+    <!-- Socket.IO -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.0/socket.io.min.js"></script>
+
+    <!-- App JavaScript -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>

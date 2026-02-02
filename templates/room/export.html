@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block title %}Export Session - {{ room_code }}{% endblock %}
+
+{% block body %}
+<!-- Export page has custom layout - no nav/footer -->
+<div class="min-h-screen bg-warm-white flex flex-col">
+    <!-- Header -->
+    <header class="bg-white border-b border-sand px-4 py-4">
+        <div class="max-w-3xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="{{ url_for('api.index') }}" class="text-warm-gray hover:text-sage transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                    </svg>
+                </a>
+                <div>
+                    <h1 class="font-semibold text-charcoal">Session Complete</h1>
+                    <p class="text-sm text-warm-gray">Room: <span class="font-mono">{{ room_code }}</span></p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-4 md:p-8">
+        <div class="max-w-3xl mx-auto">
+            <!-- Success Message -->
+            <div class="bg-sage/10 border border-sage/30 rounded-2xl p-6 mb-8 text-center">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-sage/20 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-semibold text-charcoal mb-2">Session Ended Successfully</h2>
+                <p class="text-warm-gray">Thank you for using 123Therapy. We hope this session was helpful for both of you.</p>
+            </div>
+
+            <!-- Export Options -->
+            <div class="bg-white rounded-2xl border border-sand p-6 mb-8">
+                <h3 class="font-semibold text-charcoal mb-4">Export Your Session</h3>
+                <p class="text-warm-gray text-sm mb-6">
+                    Download a copy of your conversation to review later or share with a professional therapist.
+                    This export will be available for the next 10 minutes.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <!-- PDF Export -->
+                    <button id="export-pdf" class="flex items-center gap-4 p-4 border-2 border-sand rounded-xl hover:border-sage hover:bg-sage/5 transition-all text-left">
+                        <div class="w-12 h-12 bg-crisis/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-crisis" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-medium text-charcoal">PDF Document</p>
+                            <p class="text-sm text-warm-gray">Formatted for printing or reading</p>
+                        </div>
+                    </button>
+
+                    <!-- Text Export -->
+                    <button id="export-text" class="flex items-center gap-4 p-4 border-2 border-sand rounded-xl hover:border-sage hover:bg-sage/5 transition-all text-left">
+                        <div class="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="font-medium text-charcoal">Plain Text</p>
+                            <p class="text-sm text-warm-gray">Simple text format</p>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Export Status -->
+                <div id="export-status" class="hidden mt-4 p-3 rounded-lg text-sm"></div>
+            </div>
+
+            <!-- Session Summary -->
+            <div class="bg-white rounded-2xl border border-sand p-6 mb-8">
+                <h3 class="font-semibold text-charcoal mb-4">Session Summary</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div class="p-4 bg-sand-light rounded-xl">
+                        <p class="text-2xl font-semibold text-sage" id="message-count">--</p>
+                        <p class="text-sm text-warm-gray">Messages</p>
+                    </div>
+                    <div class="p-4 bg-sand-light rounded-xl">
+                        <p class="text-2xl font-semibold text-partner-a" id="partner-a-count">--</p>
+                        <p class="text-sm text-warm-gray">Partner A</p>
+                    </div>
+                    <div class="p-4 bg-sand-light rounded-xl">
+                        <p class="text-2xl font-semibold text-partner-b" id="partner-b-count">--</p>
+                        <p class="text-sm text-warm-gray">Partner B</p>
+                    </div>
+                    <div class="p-4 bg-sand-light rounded-xl">
+                        <p class="text-2xl font-semibold text-ai-therapist" id="ai-count">--</p>
+                        <p class="text-sm text-warm-gray">AI Therapist</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Steps -->
+            <div class="bg-sand-light rounded-2xl p-6 mb-8">
+                <h3 class="font-semibold text-charcoal mb-4">Recommended Next Steps</h3>
+                <ul class="space-y-3 text-warm-gray">
+                    <li class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-sage mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Review the session transcript together when you're both calm</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-sage mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Practice the communication techniques discussed in the session</span>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <svg class="w-5 h-5 text-sage mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Consider scheduling a session with a licensed couples therapist for deeper support</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Professional Help CTA -->
+            <div class="bg-ai-therapist/10 border border-ai-therapist/30 rounded-2xl p-6 text-center">
+                <h3 class="font-semibold text-charcoal mb-2">Want Professional Support?</h3>
+                <p class="text-warm-gray text-sm mb-4">
+                    While AI-assisted sessions can help, nothing replaces working with a licensed therapist.
+                </p>
+                <a href="https://www.psychologytoday.com/us/therapists" target="_blank"
+                   class="inline-flex items-center gap-2 px-6 py-3 bg-ai-therapist text-white font-medium rounded-full hover:bg-ai-therapist/90 transition-colors">
+                    <span>Find a Therapist Near You</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Return Home -->
+            <div class="text-center mt-8">
+                <a href="{{ url_for('api.index') }}" class="text-sage hover:text-sage-dark transition-colors font-medium">
+                    Return to Home
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-sand-light border-t border-sand py-6">
+        <div class="max-w-3xl mx-auto px-4 text-center text-sm text-warm-gray">
+            <p>Your privacy matters. Session data is automatically deleted after export window expires.</p>
+        </div>
+    </footer>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const roomCode = '{{ room_code }}';
+    let sessionData = null;
+
+    // Fetch session data on load
+    async function fetchSessionData() {
+        try {
+            const response = await fetch(`/api/rooms/${roomCode}/export`);
+            if (response.ok) {
+                sessionData = await response.json();
+                updateSummary(sessionData);
+            } else {
+                showStatus('Session data not available or expired.', 'error');
+            }
+        } catch (error) {
+            console.error('Error fetching session data:', error);
+            showStatus('Failed to load session data.', 'error');
+        }
+    }
+
+    function updateSummary(data) {
+        if (!data || !data.messages) return;
+
+        const messages = data.messages;
+        let partnerACount = 0;
+        let partnerBCount = 0;
+        let aiCount = 0;
+
+        messages.forEach(msg => {
+            if (msg.is_ai) {
+                aiCount++;
+            } else if (msg.sender_role === 'partner_a') {
+                partnerACount++;
+            } else if (msg.sender_role === 'partner_b') {
+                partnerBCount++;
+            }
+        });
+
+        document.getElementById('message-count').textContent = messages.length;
+        document.getElementById('partner-a-count').textContent = partnerACount;
+        document.getElementById('partner-b-count').textContent = partnerBCount;
+        document.getElementById('ai-count').textContent = aiCount;
+    }
+
+    function showStatus(message, type) {
+        const statusEl = document.getElementById('export-status');
+        statusEl.textContent = message;
+        statusEl.classList.remove('hidden', 'bg-sage/10', 'text-sage', 'bg-crisis/10', 'text-crisis');
+
+        if (type === 'success') {
+            statusEl.classList.add('bg-sage/10', 'text-sage');
+        } else {
+            statusEl.classList.add('bg-crisis/10', 'text-crisis');
+        }
+    }
+
+    function formatSessionAsText(data) {
+        if (!data || !data.messages) return '';
+
+        let text = `123Therapy Session Export\n`;
+        text += `Room: ${roomCode}\n`;
+        text += `Date: ${new Date().toLocaleDateString()}\n`;
+        text += `${'='.repeat(50)}\n\n`;
+
+        data.messages.forEach(msg => {
+            const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            let sender = msg.is_ai ? 'AI Therapist' : (msg.sender_role === 'partner_a' ? 'Partner A' : 'Partner B');
+            text += `[${time}] ${sender}:\n${msg.content}\n\n`;
+        });
+
+        text += `${'='.repeat(50)}\n`;
+        text += `This session was facilitated by 123Therapy.\n`;
+        text += `For professional help, visit: https://www.psychologytoday.com/us/therapists\n`;
+
+        return text;
+    }
+
+    function downloadFile(content, filename, mimeType) {
+        const blob = new Blob([content], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Export as Text
+    document.getElementById('export-text').addEventListener('click', function() {
+        if (!sessionData) {
+            showStatus('Session data not loaded. Please refresh the page.', 'error');
+            return;
+        }
+
+        const text = formatSessionAsText(sessionData);
+        const filename = `123therapy-session-${roomCode}-${new Date().toISOString().split('T')[0]}.txt`;
+        downloadFile(text, filename, 'text/plain');
+        showStatus('Text file downloaded successfully!', 'success');
+    });
+
+    // Export as PDF (simplified - creates a printable HTML)
+    document.getElementById('export-pdf').addEventListener('click', function() {
+        if (!sessionData) {
+            showStatus('Session data not loaded. Please refresh the page.', 'error');
+            return;
+        }
+
+        // Create a printable window
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) {
+            showStatus('Please allow pop-ups to export as PDF.', 'error');
+            return;
+        }
+
+        let html = `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>123Therapy Session - ${roomCode}</title>
+                <style>
+                    body { font-family: 'Segoe UI', Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 40px; color: #3D3D3D; }
+                    h1 { color: #8FAE8B; margin-bottom: 5px; }
+                    .meta { color: #6B6B6B; margin-bottom: 30px; }
+                    .message { margin-bottom: 20px; padding: 15px; border-radius: 12px; }
+                    .ai { background: #B8A9C9; color: white; }
+                    .partner-a { background: #7EB5A6; color: white; }
+                    .partner-b { background: #D4A5A5; color: white; }
+                    .sender { font-weight: 600; margin-bottom: 5px; }
+                    .time { font-size: 12px; opacity: 0.8; }
+                    .content { white-space: pre-wrap; }
+                    .footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #E8E4DF; color: #6B6B6B; font-size: 14px; }
+                    @media print { body { padding: 20px; } }
+                </style>
+            </head>
+            <body>
+                <h1>123Therapy Session</h1>
+                <p class="meta">Room: ${roomCode} | Date: ${new Date().toLocaleDateString()}</p>
+        `;
+
+        sessionData.messages.forEach(msg => {
+            const time = new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            let sender, cssClass;
+            if (msg.is_ai) {
+                sender = 'AI Therapist';
+                cssClass = 'ai';
+            } else if (msg.sender_role === 'partner_a') {
+                sender = 'Partner A';
+                cssClass = 'partner-a';
+            } else {
+                sender = 'Partner B';
+                cssClass = 'partner-b';
+            }
+            html += `
+                <div class="message ${cssClass}">
+                    <div class="sender">${sender} <span class="time">${time}</span></div>
+                    <div class="content">${escapeHtml(msg.content)}</div>
+                </div>
+            `;
+        });
+
+        html += `
+                <div class="footer">
+                    <p>This session was facilitated by 123Therapy - an AI-assisted couples communication tool.</p>
+                    <p>For professional help, visit: <a href="https://www.psychologytoday.com/us/therapists">Psychology Today Therapist Directory</a></p>
+                </div>
+            </body>
+            </html>
+        `;
+
+        printWindow.document.write(html);
+        printWindow.document.close();
+        printWindow.print();
+        showStatus('Print dialog opened. Save as PDF from there.', 'success');
+    });
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    // Initialize
+    fetchSessionData();
+</script>
+{% endblock %}

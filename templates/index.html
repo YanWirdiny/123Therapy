@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="relative overflow-hidden">
+    <!-- Background gradient -->
+    <div class="absolute inset-0 bg-gradient-to-br from-sage/10 via-warm-white to-sky-soft/10"></div>
+
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
+        <div class="text-center max-w-3xl mx-auto">
+            <!-- Heading -->
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold text-charcoal leading-tight mb-6">
+                A Safe Space for
+                <span class="text-sage">Couples</span>
+                to Connect
+            </h1>
+
+            <!-- Subheading -->
+            <p class="text-lg sm:text-xl text-warm-gray mb-10 max-w-2xl mx-auto">
+                Start a guided conversation with your partner, supported by an AI therapist
+                designed to help you communicate better and understand each other more deeply.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{{ url_for('api.create_room_page') }}"
+                   class="inline-flex items-center justify-center px-8 py-4 bg-sage text-white font-medium rounded-xl hover:bg-sage-dark transition-all transform hover:-translate-y-0.5 shadow-lg shadow-sage/25">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Start a Session
+                </a>
+                <a href="{{ url_for('api.join_room_page') }}"
+                   class="inline-flex items-center justify-center px-8 py-4 bg-white text-sage font-medium rounded-xl border-2 border-sage hover:bg-sage/5 transition-all">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                    Join Partner
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="about" class="py-20 bg-sand-light">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl sm:text-4xl font-semibold text-charcoal mb-4">How It Works</h2>
+            <p class="text-warm-gray max-w-2xl mx-auto">
+                A simple, private way to have meaningful conversations with your partner.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- Step 1 -->
+            <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center mb-6">
+                    <span class="text-2xl font-semibold text-sage">1</span>
+                </div>
+                <h3 class="text-xl font-semibold text-charcoal mb-3">Create a Room</h3>
+                <p class="text-warm-gray">
+                    Start a new therapy session and receive a unique 6-digit code to share with your partner.
+                </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center mb-6">
+                    <span class="text-2xl font-semibold text-sage">2</span>
+                </div>
+                <h3 class="text-xl font-semibold text-charcoal mb-3">Connect Together</h3>
+                <p class="text-warm-gray">
+                    Your partner enters the code to join. Once both are connected, the session begins.
+                </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
+                <div class="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center mb-6">
+                    <span class="text-2xl font-semibold text-sage">3</span>
+                </div>
+                <h3 class="text-xl font-semibold text-charcoal mb-3">Guided Conversation</h3>
+                <p class="text-warm-gray">
+                    An AI therapist helps facilitate your discussion with thoughtful questions and guidance.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-20">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 class="text-3xl sm:text-4xl font-semibold text-charcoal mb-6">
+                    Designed for
+                    <span class="text-sage">Meaningful</span>
+                    Conversations
+                </h2>
+
+                <div class="space-y-6">
+                    <!-- Feature 1 -->
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-10 h-10 bg-sage/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-charcoal mb-1">Private & Secure</h4>
+                            <p class="text-warm-gray text-sm">No accounts required. Sessions are temporary and conversations aren't permanently stored.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-10 h-10 bg-sage/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-charcoal mb-1">Empathetic AI Support</h4>
+                            <p class="text-warm-gray text-sm">Our AI therapist is trained to be neutral, supportive, and guide productive discussions.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 w-10 h-10 bg-sage/10 rounded-lg flex items-center justify-center">
+                            <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-charcoal mb-1">Crisis Support</h4>
+                            <p class="text-warm-gray text-sm">If serious issues are detected, we provide immediate resources and professional referrals.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Illustration placeholder -->
+            <div class="hidden lg:block">
+                <div class="bg-gradient-to-br from-sage/20 to-sky-soft/20 rounded-3xl p-8 aspect-square flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="w-32 h-32 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-lg">
+                            <svg class="w-16 h-16 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-warm-gray">Real-time, guided conversations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Disclaimer Banner -->
+<section id="resources" class="py-12 bg-crisis/10 border-y border-crisis/20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="flex items-center justify-center mb-4">
+            <svg class="w-6 h-6 text-crisis mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+            </svg>
+            <h3 class="text-xl font-semibold text-charcoal">Important Disclaimer</h3>
+        </div>
+        <p class="text-warm-gray max-w-2xl mx-auto">
+            123Therapy is <strong>not a replacement</strong> for professional mental health services.
+            This tool is designed to supplement, not replace, licensed therapy.
+            If you or your partner are experiencing a mental health emergency,
+            please contact emergency services (911) or a crisis hotline immediately.
+        </p>
+    </div>
+</section>
+
+<!-- Final CTA -->
+<section class="py-20">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl sm:text-4xl font-semibold text-charcoal mb-6">
+            Ready to Start Talking?
+        </h2>
+        <p class="text-warm-gray mb-10 max-w-xl mx-auto">
+            Take the first step toward better communication with your partner.
+        </p>
+        <a href="{{ url_for('api.create_room_page') }}"
+           class="inline-flex items-center justify-center px-10 py-4 bg-sage text-white font-medium rounded-xl hover:bg-sage-dark transition-all transform hover:-translate-y-0.5 shadow-lg shadow-sage/25 text-lg">
+            Begin Your Session
+        </a>
+    </div>
+</section>
+{% endblock %}

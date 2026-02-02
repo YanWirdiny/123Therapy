@@ -1,0 +1,31 @@
+{
+  "violence_abuse": [
+    "hit", "hitting", "punch", "slap", "choke", "strangle",
+    "abuse", "abusive", "violent", "violence", "hurt me",
+    "scared of him", "scared of her", "threatens", "threatening",
+    "bruise", "bruises", "forced", "rape", "assault", "beat",
+    "weapon", "gun", "knife"
+  ],
+  "mental_health": [
+    "suicide", "suicidal", "kill myself", "end my life",
+    "want to die", "better off dead", "self-harm", "cutting",
+    "hopeless", "no point", "can't go on", "overdose",
+    "harm myself", "hurt myself", "don't want to live"
+  ],
+  "infidelity": [
+    "cheating", "cheated", "affair", "unfaithful", "betrayed",
+    "other woman", "other man", "sleeping with", "caught them",
+    "having an affair", "seeing someone else"
+  ],
+  "substance_abuse": [
+    "drunk", "drinking problem", "alcoholic", "addiction",
+    "addicted", "drugs", "high all the time", "cocaine",
+    "heroin", "pills", "gambling", "can't stop drinking",
+    "blackout", "withdrawals"
+  ],
+  "communication_breakdown": [
+    "never listens", "always yelling", "constant fighting",
+    "silent treatment", "won't talk", "refuses to communicate",
+    "stonewalling", "gaslighting", "manipulation", "controlling"
+  ]
+}

@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - {{ room_code }}{% endblock %}
+
+{% block body %}
+<!-- Chat page has custom layout - no nav/footer -->
+<div class="h-screen flex flex-col bg-warm-white">
+    <!-- Header -->
+    <header class="bg-white border-b border-sand px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('api.index') }}" class="text-warm-gray hover:text-sage transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </a>
+            <div>
+                <h1 class="font-semibold text-charcoal">Therapy Session</h1>
+                <p class="text-sm text-warm-gray">Room: <span class="font-mono">{{ room_code }}</span></p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <!-- Partner Status -->
+            <div id="partner-status" class="flex items-center gap-2 text-sm">
+                <div id="status-dot" class="w-2 h-2 rounded-full bg-warm-gray"></div>
+                <span id="status-text" class="text-warm-gray">Connecting...</span>
+            </div>
+
+            <!-- End Session -->
+            <button id="end-session-btn" class="text-crisis hover:text-crisis/80 transition-colors text-sm font-medium">
+                End Session
+            </button>
+        </div>
+    </header>
+
+    <!-- Chat Messages -->
+    <main class="flex-1 overflow-y-auto p-4" id="chat-container">
+        <div class="max-w-3xl mx-auto space-y-4" id="messages">
+            <!-- Messages will be inserted here -->
+
+            <!-- Welcome message placeholder -->
+            <div class="text-center py-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-ai-therapist/20 rounded-full mb-4">
+                    <svg class="w-8 h-8 text-ai-therapist" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                    </svg>
+                </div>
+                <p class="text-warm-gray" id="waiting-message">Waiting for both partners to connect...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Typing Indicator -->
+    <div id="typing-indicator" class="hidden px-4 py-2 max-w-3xl mx-auto w-full">
+        <div class="flex items-center gap-2 text-warm-gray text-sm">
+            <div class="flex gap-1">
+                <div class="w-2 h-2 bg-warm-gray rounded-full typing-dot"></div>
+                <div class="w-2 h-2 bg-warm-gray rounded-full typing-dot"></div>
+                <div class="w-2 h-2 bg-warm-gray rounded-full typing-dot"></div>
+            </div>
+            <span id="typing-text">Someone is typing...</span>
+        </div>
+    </div>
+
+    <!-- Message Input -->
+    <footer class="bg-white border-t border-sand p-4">
+        <div class="max-w-3xl mx-auto">
+            <form id="message-form" class="flex gap-3">
+                <input type="text"
+                       id="message-input"
+                       placeholder="Type your message..."
+                       class="flex-1 px-4 py-3 border-2 border-sand rounded-full focus:border-sage focus:outline-none transition-colors"
+                       autocomplete="off">
+                <button type="submit"
+                        class="px-6 py-3 bg-sage text-white font-medium rounded-full hover:bg-sage-dark transition-colors flex items-center gap-2">
+                    <span class="hidden sm:inline">Send</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </footer>
+</div>
+
+<!-- Crisis Modal -->
+<div id="crisis-modal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-crisis/20 rounded-full flex items-center justify-center">
+                <svg class="w-5 h-5 text-crisis" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                </svg>
+            </div>
+            <h2 class="text-xl font-semibold text-charcoal">We're Here to Help</h2>
+        </div>
+
+        <p class="text-warm-gray mb-4" id="crisis-message">
+            Based on what's been shared, we want to make sure you have the support you need.
+        </p>
+
+        <div id="crisis-resources" class="bg-sand-light rounded-xl p-4 mb-6 text-sm">
+            <!-- Resources will be inserted here -->
+        </div>
+
+        <div class="flex gap-3">
+            <button id="crisis-continue" class="flex-1 py-3 bg-sand-light text-charcoal font-medium rounded-xl hover:bg-sand transition-colors">
+                Continue Session
+            </button>
+            <a href="https://www.psychologytoday.com/us/therapists" target="_blank"
+               class="flex-1 py-3 bg-sage text-white font-medium rounded-xl hover:bg-sage-dark transition-colors text-center">
+                Find a Therapist
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const socket = io();
+    const roomCode = '{{ room_code }}';
+    let myRole = null;
+
+    // Use sessionStorage so each tab gets its own unique identity
+    // This allows testing with multiple tabs as different partners
+    let userId = sessionStorage.getItem('visitorId');
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        sessionStorage.setItem('visitorId', userId);
+    }
+
+    // DOM elements
+    const messagesContainer = document.getElementById('messages');
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message-input');
+    const statusDot = document.getElementById('status-dot');
+    const statusText = document.getElementById('status-text');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const typingText = document.getElementById('typing-text');
+    const waitingMessage = document.getElementById('waiting-message');
+    const crisisModal = document.getElementById('crisis-modal');
+    const crisisResources = document.getElementById('crisis-resources');
+    const crisisMessage = document.getElementById('crisis-message');
+
+    // Join room on connect
+    socket.on('connect', function() {
+        socket.emit('join_room', { room_code: roomCode, user_id: userId });
+    });
+
+    // Joined room
+    socket.on('joined', function(data) {
+        myRole = data.role;
+        updateStatus(data.partner_count === 2);
+        if (data.partner_count === 2) {
+            waitingMessage.textContent = 'Both partners connected. The AI therapist will begin shortly.';
+        }
+    });
+
+    // Rejoined room
+    socket.on('rejoined', function(data) {
+        myRole = data.role;
+    });
+
+    // Partner joined
+    socket.on('partner_joined', function(data) {
+        updateStatus(true);
+        waitingMessage.textContent = 'Both partners connected. The AI therapist will begin shortly.';
+    });
+
+    // Partner disconnected
+    socket.on('partner_disconnected', function(data) {
+        updateStatus(false);
+        addSystemMessage('Your partner has disconnected. They can reconnect within 5 minutes.');
+    });
+
+    // Partner reconnected
+    socket.on('partner_reconnected', function(data) {
+        updateStatus(true);
+        addSystemMessage('Your partner has reconnected.');
+    });
+
+    // Session ready
+    socket.on('session_ready', function(data) {
+        waitingMessage.classList.add('hidden');
+    });
+
+    // New message
+    socket.on('new_message', function(data) {
+        addMessage(data);
+    });
+
+    // AI typing
+    socket.on('ai_typing', function(data) {
+        if (data.typing) {
+            typingText.textContent = 'AI Therapist is typing...';
+            typingIndicator.classList.remove('hidden');
+        } else {
+            typingIndicator.classList.add('hidden');
+        }
+    });
+
+    // Partner typing
+    socket.on('partner_typing', function(data) {
+        if (data.typing) {
+            typingText.textContent = 'Your partner is typing...';
+            typingIndicator.classList.remove('hidden');
+        } else {
+            typingIndicator.classList.add('hidden');
+        }
+    });
+
+    // Crisis detected
+    socket.on('crisis_detected', function(data) {
+        crisisMessage.textContent = data.message;
+        crisisResources.innerHTML = data.resources.replace(/\n/g, '<br>');
+        crisisModal.classList.remove('hidden');
+    });
+
+    // Session ended
+    socket.on('session_ended', function(data) {
+        window.location.href = `/room/${roomCode}/export`;
+    });
+
+    // Error
+    socket.on('error', function(data) {
+        if (data.type === 'room_not_found' || data.type === 'room_inactive') {
+            alert(data.message);
+            window.location.href = '/';
+        }
+    });
+
+    // Send message
+    messageForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const content = messageInput.value.trim();
+        if (content) {
+            socket.emit('send_message', { content: content });
+            messageInput.value = '';
+            socket.emit('typing', { typing: false });
+        }
+    });
+
+    // Typing indicator
+    let typingTimeout;
+    messageInput.addEventListener('input', function() {
+        socket.emit('typing', { typing: true });
+        clearTimeout(typingTimeout);
+        typingTimeout = setTimeout(function() {
+            socket.emit('typing', { typing: false });
+        }, 1000);
+    });
+
+    // End session
+    document.getElementById('end-session-btn').addEventListener('click', function() {
+        if (confirm('Are you sure you want to end this session?')) {
+            socket.emit('end_session', { room_code: roomCode });
+        }
+    });
+
+    // Crisis modal continue
+    document.getElementById('crisis-continue').addEventListener('click', function() {
+        crisisModal.classList.add('hidden');
+    });
+
+    // Helper functions
+    function updateStatus(connected) {
+        if (connected) {
+            statusDot.className = 'w-2 h-2 rounded-full bg-sage';
+            statusText.textContent = 'Partner connected';
+            statusText.className = 'text-sage';
+        } else {
+            statusDot.className = 'w-2 h-2 rounded-full bg-warm-gray';
+            statusText.textContent = 'Waiting for partner...';
+            statusText.className = 'text-warm-gray';
+        }
+    }
+
+    function addMessage(data) {
+        const isMe = data.sender_role === myRole;
+        const isAI = data.is_ai;
+
+        let bubbleClass, alignClass;
+        if (isAI) {
+            bubbleClass = 'bg-ai-therapist text-white';
+            alignClass = 'justify-center';
+        } else if (isMe) {
+            // My messages go right, use my role's color
+            bubbleClass = data.sender_role === 'partner_a' ? 'bg-partner-a text-white' : 'bg-partner-b text-white';
+            alignClass = 'justify-end';
+        } else {
+            // Partner's messages go left, use their role's color
+            bubbleClass = data.sender_role === 'partner_a' ? 'bg-partner-a text-white' : 'bg-partner-b text-white';
+            alignClass = 'justify-start';
+        }
+
+        const time = new Date(data.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+        const messageHtml = `
+            <div class="flex ${alignClass} message-enter">
+                <div class="max-w-[80%] ${isAI ? 'max-w-[85%]' : ''}">
+                    <div class="${bubbleClass} px-4 py-3 rounded-2xl ${isAI ? 'rounded-xl' : isMe ? 'rounded-br-md' : 'rounded-bl-md'}">
+                        ${isAI ? '<p class="text-xs opacity-75 mb-1 font-medium">AI Therapist</p>' : ''}
+                        <p class="whitespace-pre-wrap">${escapeHtml(data.content)}</p>
+                    </div>
+                    <p class="text-xs text-warm-gray mt-1 ${isMe ? 'text-right' : ''}">${time}</p>
+                </div>
+            </div>
+        `;
+
+        // Hide waiting message
+        waitingMessage.parentElement.classList.add('hidden');
+
+        messagesContainer.insertAdjacentHTML('beforeend', messageHtml);
+        scrollToBottom();
+    }
+
+    function addSystemMessage(text) {
+        const messageHtml = `
+            <div class="flex justify-center message-enter">
+                <div class="bg-sand px-4 py-2 rounded-full text-sm text-warm-gray">
+                    ${escapeHtml(text)}
+                </div>
+            </div>
+        `;
+        messagesContainer.insertAdjacentHTML('beforeend', messageHtml);
+        scrollToBottom();
+    }
+
+    function scrollToBottom() {
+        const chatContainer = document.getElementById('chat-container');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Join Room{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-200px)] flex items-center justify-center py-12">
+    <div class="max-w-md w-full mx-4">
+        <!-- Card -->
+        <div class="bg-white rounded-2xl shadow-lg p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-2xl font-semibold text-charcoal mb-2">Join Your Partner</h1>
+                <p class="text-warm-gray">Enter the 6-digit room code shared by your partner</p>
+            </div>
+
+            <!-- Room Code Input -->
+            <div class="mb-6">
+                <div class="flex justify-center gap-2" id="code-inputs">
+                    <input type="text" maxlength="1" class="code-input w-12 h-14 text-center text-2xl font-mono font-bold border-2 border-sand rounded-xl focus:border-sage focus:outline-none transition-colors uppercase" data-index="0">
+                    <input type="text" maxlength="1" class="code-input w-12 h-14 text-center text-2xl font-mono font-bold border-2 border-sand rounded-xl focus:border-sage focus:outline-none transition-colors uppercase" data-index="1">
+                    <input type="text" maxlength="1" class="code-input w-12 h-14 text-center text-2xl font-mono font-bold border-2 border-sand rounded-xl focus:border-sage focus:outline-none transition-colors uppercase" data-index="2">
+                    <input type="text" maxlength="1" class="code-input w-12 h-14 text-center text-2xl font-mono font-bold border-2 border-sand rounded-xl focus:border-sage focus:outline-none transition-colors uppercase" data-index="3">
+                    <input type="text" maxlength="1" class="code-input w-12 h-14 text-center text-2xl font-mono font-bold border-2 border-sand rounded-xl focus:border-sage focus:outline-none transition-colors uppercase" data-index="4">
+                    <input type="text" maxlength="1" class="code-input w-12 h-14 text-center text-2xl font-mono font-bold border-2 border-sand rounded-xl focus:border-sage focus:outline-none transition-colors uppercase" data-index="5">
+                </div>
+
+                <!-- Error Message -->
+                <p id="error-message" class="text-crisis text-sm text-center mt-3 hidden"></p>
+            </div>
+
+            <!-- Join Button -->
+            <button id="join-room-btn"
+                    class="w-full py-4 bg-sage text-white font-medium rounded-xl hover:bg-sage-dark transition-all transform hover:-translate-y-0.5 shadow-lg shadow-sage/25 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                    disabled>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+                Join Room
+            </button>
+
+            <!-- Or divider -->
+            <div class="flex items-center my-6">
+                <div class="flex-1 border-t border-sand"></div>
+                <span class="px-4 text-warm-gray text-sm">or</span>
+                <div class="flex-1 border-t border-sand"></div>
+            </div>
+
+            <!-- Create room link -->
+            <a href="{{ url_for('api.create_room_page') }}"
+               class="block w-full py-3 text-center text-sage font-medium border-2 border-sage rounded-xl hover:bg-sage/5 transition-colors">
+                Create a New Room
+            </a>
+
+            <!-- Back Link -->
+            <div class="mt-6 text-center">
+                <a href="{{ url_for('api.index') }}" class="text-warm-gray hover:text-sage transition-colors text-sm">
+                    &larr; Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const inputs = document.querySelectorAll('.code-input');
+    const joinBtn = document.getElementById('join-room-btn');
+    const errorMsg = document.getElementById('error-message');
+
+    // Handle input
+    inputs.forEach((input, index) => {
+        input.addEventListener('input', function(e) {
+            const value = e.target.value.toUpperCase();
+            e.target.value = value;
+
+            if (value && index < inputs.length - 1) {
+                inputs[index + 1].focus();
+            }
+
+            checkCode();
+        });
+
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                inputs[index - 1].focus();
+            }
+        });
+
+        // Handle paste
+        input.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const paste = e.clipboardData.getData('text').toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+            for (let i = 0; i < Math.min(paste.length, inputs.length); i++) {
+                inputs[i].value = paste[i];
+            }
+
+            if (paste.length >= inputs.length) {
+                inputs[inputs.length - 1].focus();
+            }
+
+            checkCode();
+        });
+    });
+
+    function getCode() {
+        return Array.from(inputs).map(input => input.value).join('');
+    }
+
+    function checkCode() {
+        const code = getCode();
+        joinBtn.disabled = code.length !== 6;
+        errorMsg.classList.add('hidden');
+    }
+
+    // Validate room and redirect - don't join here, let chat.html handle it
+    joinBtn.addEventListener('click', async function() {
+        const code = getCode();
+        if (code.length !== 6) return;
+
+        joinBtn.disabled = true;
+        joinBtn.innerHTML = `
+            <svg class="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+            </svg>
+            Validating...
+        `;
+
+        try {
+            const response = await fetch(`/api/rooms/${code}/validate`);
+            const data = await response.json();
+
+            if (data.joinable) {
+                // Room is valid and joinable - redirect to chat
+                window.location.href = `/room/${code}/chat`;
+            } else {
+                // Show error
+                errorMsg.textContent = data.message || 'Unable to join this room.';
+                errorMsg.classList.remove('hidden');
+                joinBtn.disabled = false;
+                joinBtn.innerHTML = `
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                    </svg>
+                    Join Room
+                `;
+
+                // Shake animation
+                inputs.forEach(input => {
+                    input.classList.add('border-crisis');
+                    setTimeout(() => input.classList.remove('border-crisis'), 1000);
+                });
+            }
+        } catch (error) {
+            errorMsg.textContent = 'Connection error. Please try again.';
+            errorMsg.classList.remove('hidden');
+            joinBtn.disabled = false;
+            joinBtn.innerHTML = `
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
+                Join Room
+            `;
+        }
+    });
+
+    // Focus first input on load
+    inputs[0].focus();
+</script>
+{% endblock %}
