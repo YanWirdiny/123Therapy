@@ -418,3 +418,48 @@ A web application that provides couples with AI-assisted preliminary therapy ses
 **Project Status:** Planning Phase  
 **Developer Level:** Intermediate  
 **Estimated Timeline:** 4-5 weeks to MVP
+
+123Therapy 2.0
+
+**Goal** 
+Migrate for a couple AI therapy only to a more general system open to everyone. 
+Utilization 123Therapy for deeper intermediate for a  therapist and his new clients.
+
+Update  the whole application but implementing: 
+- Universality by  implementing 3 mode of utilization 
+    - Solo for personal communication with the AI therapist.
+    - Duo that is current state usable for Couples, Friends, Siblings
+    - Group MAX  of 4 Persons 
+
+# Insight on each mode 
+**SOLO**
+- Solo conversation will feature Eleven labs for TTS and STT for  quicker and more personal experience. 
+- Updates of the AI Prompt for a MORE adapted service and personalized.
+
+**DUO**
+Current developed mode we need to keep it as it is but change prompt to adapt to the relativity of the persons 
+- couple, siblings, friends should be having different treatment and adapted question.
+(Need brainstorming to  update the method of communication in between both individuals).\
+- Nature of relation will be ask as a drop down at the start of the chat and parse to Gemini 
+    for prompting adaptation
+
+**GROUP**
+BETA
+- Implement rule for limiting room for 4 people 
+- adapt AI to group conversation and better context handling from different sources.
+
+**GENERAL** 
+-Not being implemented yet-
+- A service of personalisation by choosing avatar for the AI  including  a different style of therapist  in term of communication. 
+
+- Upgrade of the AI chat UI  to for easier  reading and understanding for the general users.
+
+-ability to email your chat to your chosen therapist for context for your first  meeting.
+
+
+**FURTHER GOAL**
+Implement a process for  Therapist to assign pre-assessment to their patient  for knowledge context for meeting
+
+---
+**Last Updated:** March 12, 2026  
+**Project Status:** Implementation  2.0
