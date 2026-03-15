@@ -2,196 +2,1826 @@
 
 {% block title %}Welcome{% endblock %}
 
-{% block content %}
-<!-- Hero Section -->
-<section class="relative overflow-hidden">
-    <!-- Background gradient -->
-    <div class="absolute inset-0 bg-gradient-to-br from-sage/10 via-warm-white to-sky-soft/10"></div>
+{% block head %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,700;0,800;1,400&family=Italianno&family=Roboto:wght@700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
 
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
-        <div class="text-center max-w-3xl mx-auto">
-            <!-- Heading -->
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold text-charcoal leading-tight mb-6">
-                A Safe Space for
-                <span class="text-sage">Couples</span>
-                to Connect
-            </h1>
+<style>
+/* ============================================================
+   123THERAPY — LANDING PAGE 2.0
+   Standalone CSS (no Tailwind classes used here)
+   ============================================================ */
 
-            <!-- Subheading -->
-            <p class="text-lg sm:text-xl text-warm-gray mb-10 max-w-2xl mx-auto">
-                Start a guided conversation with your partner, supported by an AI therapist
-                designed to help you communicate better and understand each other more deeply.
-            </p>
+/* DESIGN TOKENS */
+:root {
+  --color-cream:     #FCF2D5;
+  --color-green:     #BBDBB4;
+  --color-brown:     #BA7A5E;    
 
-            <!-- CTA Buttons -->
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ url_for('api.create_room_page') }}"
-                   class="inline-flex items-center justify-center px-8 py-4 bg-sage text-white font-medium rounded-xl hover:bg-sage-dark transition-all transform hover:-translate-y-0.5 shadow-lg shadow-sage/25">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    Start a Session
-                </a>
-                <a href="{{ url_for('api.join_room_page') }}"
-                   class="inline-flex items-center justify-center px-8 py-4 bg-white text-sage font-medium rounded-xl border-2 border-sage hover:bg-sage/5 transition-all">
-                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-                    </svg>
-                    Join Partner
-                </a>
-            </div>
-        </div>
+  --color-black:     #000000;
+  --color-white:     #FFFFFF;
+  --color-overlay:   rgba(255, 255, 255, 0);
+}
+
+/* SCOPED RESET */
+.lp-root,
+.lp-root * {
+  box-sizing: border-box;
+}
+.lp-root {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+.lp-root img {
+  display: block;
+}
+
+/* ============================================================
+   SECTION 1 — NAVBAR
+   ============================================================ */
+.lp-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 48px;
+  background: transparent;
+  transition: background 0.3s ease, backdrop-filter 0.3s ease;
+}
+.lp-nav.scrolled {
+  background: rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.lp-nav__logo {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--color-white);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+}
+.lp-nav__links {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.lp-nav__links a {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--color-white);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: opacity 0.2s;
+}
+.lp-nav__links a:hover {
+  opacity: 0.65;
+}
+.lp-nav__burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 4px;
+}
+.lp-nav__burger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--color-white);
+  transition: all 0.3s ease;
+}
+
+/* ============================================================
+   SECTION 2 — HERO
+   ============================================================ */
+.lp-hero {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.lp-hero__bg {
+  position: absolute;
+  inset: 0;
+  background-image: url("{{ url_for('static', filename='images/hero-background.jpg') }}");
+  background-size: cover;
+  background-position: center 40%;
+  /* Fallback if image not yet placed */
+  background-color: #182e3a;
+  animation: lpFadeIn 1.2s ease forwards;
+  opacity: 0;
+}
+/* Soft gradient vignette for legibility */
+.lp-hero__bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.12) 0%,
+    rgba(0, 0, 0, 0.08) 45%,
+    rgba(0, 0, 0, 0.38) 100%
+  );
+}
+.lp-hero__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 44px;
+  margin-top: -4vh;
+}
+.lp-hero__title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 128px;
+  line-height: 1;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: 0;
+  animation: lpFadeUp 0.8s ease 0.3s forwards;
+}
+.lp-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 277px;
+  height: 81px;
+  background: var(--color-white);
+  border: none;
+  border-radius: 40px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 32px;
+  color: var(--color-black);
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  opacity: 0;
+  animation: lpFadeIn 0.6s ease 0.7s forwards;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.lp-hero__cta:hover {
+  transform: scale(1.03);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+.lp-hero__cta:focus-visible {
+  outline: 3px solid var(--color-white);
+  outline-offset: 4px;
+}
+
+/* ============================================================
+   HERO MODE PANEL (revealed on GET STARTED click)
+   ============================================================ */
+.lp-hero__mode-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40%;
+  height: 100%;
+  background: var(--color-brown);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  z-index: 3;
+  /* initial transform managed by GSAP — see gsap.set below */
+}
+.lp-hero__mode-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 277px;
+  height: 81px;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  border-radius: 40px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.lp-hero__mode-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-white);
+}
+
+/* ============================================================
+   SECTION 3 — VALUE PROPOSITION
+   ============================================================ */
+.lp-value {
+  background: var(--color-cream);
+  position: relative;
+  z-index: 2; /* slides over the pinned hero */
+  width: 100%;
+  min-height: 736px;
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  grid-template-rows: auto auto;
+  position: relative;
+  overflow: hidden;
+  padding: 88px 80px 0 80px;
+}
+.lp-value__text {
+  grid-column: 1;
+  grid-row: 1;
+  padding-right: 40px;
+  padding-bottom: 64px;
+}
+.lp-value__heading {
+  margin-bottom: 52px;
+  line-height: 1.15;
+}
+.lp-value__heading .line-standard {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  color: var(--color-black);
+  display: block;
+}
+.lp-value__heading .line-script {
+  font-family: 'Italianno', cursive;
+  font-weight: 400;
+  font-size: 64px;
+  color: var(--color-black);
+  font-style: italic;
+  display: inline;
+  vertical-align: baseline;
+}
+.lp-value__features {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+.lp-value__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+.lp-value__feature-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  line-height: 1;
+}
+.lp-value__feature-body {
+  flex: 1;
+}
+.lp-value__feature-title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--color-black);
+  margin: 0 0 6px 0;
+}
+.lp-value__feature-desc {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--color-black);
+  line-height: 1.65;
+  opacity: 0.72;
+  margin: 0;
+}
+.lp-value__portrait {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: start;
+}
+.lp-value__portrait img {
+  width: 340px;
+  height: 510px;
+  object-fit: cover;
+  border-radius: 40px;
+}
+.lp-value__portrait-fallback {
+  width: 340px;
+  height: 510px;
+  border-radius: 50px;
+  background: linear-gradient(155deg, #c8d9cb 0%, #a4bbaf 100%);
+}
+.lp-value__wide-img {
+  grid-column: 1;
+  grid-row: 2;
+  margin-left: -80px;
+  align-self: end;
+}
+.lp-value__wide-img img {
+  width: 921px;
+  height: 496px;
+  object-fit: cover;
+  object-position: center 30%;
+}
+.lp-value__wide-img-fallback {
+  width: 921px;
+  height: 496px;
+  background: linear-gradient(120deg, #aec4bb 0%, #88a89a 100%);
+}
+
+/* ============================================================
+   SECTION 4 — DISCLAIMER (split layout)
+   ============================================================ */
+.lp-disclaimer {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 560px;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+.lp-disclaimer__video-side {
+  position: relative;
+  overflow: hidden;
+  min-height: 400px;
+  /* Fallback colour if video doesn't load */
+  background: #3a5a6a;
+}
+.lp-disclaimer__video-side video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* Cream cover that slides away to reveal the video */
+.lp-disclaimer__video-cover {
+  position: absolute;
+  inset: 0;
+  background: var(--color-cream);
+  z-index: 2;
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* White overlay on video */
+.lp-disclaimer__video-side::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-overlay);
+  z-index: 1;
+}
+.lp-disclaimer__text-side {
+  background: var(--color-brown);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 60px;
+  gap: 28px;
+  text-align: center;
+}
+.lp-disclaimer__heading {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  color: var(--color-cream);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+.lp-disclaimer__body {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--color-cream);
+  line-height: 1.6;
+  max-width: 451px;
+  text-align: center;
+  margin: 0;
+  opacity: 0.92;
+}
+
+/* ============================================================
+   SECTION 5.5 — TRANSITION PARALLAX
+   ============================================================ */
+.lp-transition {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  overflow: hidden;
+}
+.lp-transition__bg {
+  position: absolute;
+  inset: 0;
+}
+.lp-transition__bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.lp-transition__cover {
+  position: absolute;
+  inset: 0;
+  background: var(--color-cream);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+/* ============================================================
+   SECTION 6 — TESTIMONIALS (over ocean video bg)
+   ============================================================ */
+.lp-testimonials {
+  position: relative;
+  width: 100%;
+  padding: 80px 48px 100px;
+  overflow: hidden;
+  /* Fallback bg if video doesn't load */
+  background: #3a5a6a;
+}
+.lp-testimonials__video-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.lp-testimonials__video-bg video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.lp-testimonials__video-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--color-overlay);
+}
+.lp-testimonials__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+.lp-testimonial-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+.lp-testimonial-card {
+  background: var(--color-cream);
+  width: 100%;
+  max-width: 435px;
+  min-height: 583px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 40px 32px 40px;
+  gap: 24px;
+}
+.lp-testimonial-card__photo {
+  width: 220px;
+  height: 250px;
+  object-fit: cover;
+  object-position: center top;
+  flex-shrink: 0;
+}
+.lp-testimonial-card__photo-fallback {
+  width: 220px;
+  height: 250px;
+  background: #b0b0b0;
+  flex-shrink: 0;
+}
+.lp-testimonial-card__quote {
+  font-family: 'Inter', sans-serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--color-black);
+  text-align: center;
+  max-width: 302px;
+  line-height: 1.7;
+  margin: 0;
+  padding: 0;
+}
+.lp-testimonial-card__attribution {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--color-black);
+  text-align: center;
+  opacity: 0.6;
+  font-style: italic;
+  margin: 0;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.lp-footer {
+  background: var(--color-black);
+  padding: 40px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.lp-footer__brand {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--color-white);
+  letter-spacing: 0.06em;
+}
+.lp-footer__copy {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+.lp-footer__crisis {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: right;
+  line-height: 1.65;
+}
+.lp-footer__crisis strong {
+  color: var(--color-white);
+}
+
+/* ============================================================
+   SECTION 5 — MODES (dark bg, 3-column cards)
+   ============================================================ */
+.lp-modes {
+  background: var(--color-black);
+  padding: 88px 80px;
+  overflow: hidden;
+  position: relative;
+  z-index: 2;
+}
+.lp-modes__heading {
+  text-align: center;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  color: var(--color-white);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 64px;
+}
+.lp-modes__heading span {
+  color: var(--color-green);
+}
+.lp-modes__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.lp-mode-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 48px 32px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+.lp-mode-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.lp-mode-card__icon {
+  width: 48px;
+  height: 48px;
+  background: rgba(187, 219, 180, 0.15);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-green);
+}
+.lp-mode-card__icon--pro {
+  background: rgba(186, 122, 94, 0.15);
+  color: var(--color-brown);
+}
+.lp-mode-card__badge {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-green);
+  background: rgba(187, 219, 180, 0.12);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+.lp-mode-card__badge--pro {
+  color: var(--color-brown);
+  background: rgba(186, 122, 94, 0.12);
+}
+.lp-mode-card__title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--color-white);
+  margin: 0;
+}
+.lp-mode-card__desc {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.7;
+  margin: 0;
+}
+
+/* ============================================================
+   SECTION 6 — PRICING (cream bg, two cards)
+   ============================================================ */
+.lp-pricing {
+  background: var(--color-cream);
+  padding: 88px 80px;
+  overflow: hidden;
+  position: relative;
+  z-index: 3;
+}
+.lp-pricing__header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.lp-pricing__title {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 40px;
+  color: var(--color-black);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 12px;
+}
+.lp-pricing__subtitle {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 18px;
+  color: rgba(0, 0, 0, 0.5);
+  margin: 0;
+}
+.lp-pricing__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.lp-pricing-card {
+  border-radius: 24px;
+  padding: 48px 40px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.lp-pricing-card--free:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12);
+  border-color: var(--color-green);
+}
+.lp-pricing-card--pro:hover {
+  transform: translateY(-12px) scale(1.02);
+  box-shadow: 0 20px 48px rgba(186, 122, 94, 0.35), 0 0 0 1px var(--color-brown);
+  border-color: var(--color-brown);
+}
+.lp-pricing-card--free {
+  background: var(--color-white);
+  border: 2px solid rgba(0, 0, 0, 0.08);
+}
+.lp-pricing-card--pro {
+  background: var(--color-black);
+  border: 2px solid var(--color-brown);
+}
+.lp-pricing-card__tier {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin: 0 0 16px;
+}
+.lp-pricing-card--free .lp-pricing-card__tier { color: var(--color-brown); }
+.lp-pricing-card--pro .lp-pricing-card__tier  { color: var(--color-brown); }
+.lp-pricing-card__price {
+  font-family: 'Inter', sans-serif;
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 1;
+  margin: 0 0 6px;
+}
+.lp-pricing-card--free .lp-pricing-card__price { color: var(--color-black); }
+.lp-pricing-card--pro  .lp-pricing-card__price { color: var(--color-white); }
+.lp-pricing-card__period {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  margin: 0 0 28px;
+  opacity: 0.45;
+}
+.lp-pricing-card--free .lp-pricing-card__period { color: var(--color-black); }
+.lp-pricing-card--pro  .lp-pricing-card__period { color: var(--color-white); }
+.lp-pricing-card__divider {
+  border: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  margin: 0 0 28px;
+}
+.lp-pricing-card--pro .lp-pricing-card__divider {
+  border-top-color: rgba(255, 255, 255, 0.12);
+}
+.lp-pricing-card__features {
+  list-style: none;
+  margin: 0 0 32px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+}
+.lp-pricing-card__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.lp-pricing-card--free .lp-pricing-card__feature { color: rgba(0, 0, 0, 0.75); }
+.lp-pricing-card--pro  .lp-pricing-card__feature { color: rgba(255, 255, 255, 0.82); }
+.lp-pricing-card__check {
+  flex-shrink: 0;
+  margin-top: 1px;
+  width: 18px;
+  height: 18px;
+}
+.lp-pricing-card--free .lp-pricing-card__check { color: var(--color-green); }
+.lp-pricing-card--pro  .lp-pricing-card__check { color: var(--color-brown); }
+.lp-pricing-card__note {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  font-style: italic;
+  opacity: 0.45;
+  margin: -18px 0 28px 30px;
+}
+.lp-pricing-card--free .lp-pricing-card__note { color: var(--color-black); }
+.lp-pricing-card--pro  .lp-pricing-card__note { color: var(--color-white); }
+.lp-pricing-card__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 56px;
+  border-radius: 28px;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.lp-pricing-card--free .lp-pricing-card__cta {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+.lp-pricing-card--pro .lp-pricing-card__cta {
+  background: var(--color-brown);
+  color: var(--color-white);
+}
+.lp-pricing-card__cta:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================================
+   KEYFRAME ANIMATIONS
+   ============================================================ */
+@keyframes lpFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes lpFadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scroll-reveal base states */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.reveal--right {
+  transform: translateX(28px);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ============================================================
+   RESPONSIVE — TABLET  ≤ 1024px
+   ============================================================ */
+@media (max-width: 1024px) {
+  .lp-hero__title {
+    font-size: 72px;
+  }
+  .lp-value {
+    grid-template-columns: 1fr;
+    padding: 64px 40px 0;
+  }
+  .lp-value__text {
+    padding-right: 0;
+    padding-bottom: 48px;
+  }
+  .lp-value__portrait {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .lp-value__portrait img {
+    width: 100%;
+    height: 420px;
+    border-radius: 30px;
+  }
+  .lp-value__portrait-fallback {
+    width: 100%;
+    height: 420px;
+    border-radius: 30px;
+  }
+  .lp-value__wide-img {
+    grid-column: 1;
+    grid-row: 3;
+    margin-left: -40px;
+  }
+  .lp-value__wide-img img,
+  .lp-value__wide-img-fallback {
+    width: 100%;
+    height: 300px;
+  }
+  .lp-disclaimer {
+    grid-template-columns: 1fr;
+  }
+  .lp-disclaimer__video-side {
+    min-height: 280px;
+  }
+  .lp-disclaimer__text-side {
+    padding: 60px 40px;
+    align-items: center;
+  }
+  .lp-testimonials__inner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+  .lp-nav {
+    padding: 20px 32px;
+  }
+  .lp-modes {
+    padding: 64px 40px;
+  }
+  .lp-modes__grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .lp-pricing {
+    padding: 64px 40px;
+  }
+  .lp-pricing__grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    gap: 24px;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE — MOBILE  ≤ 768px
+   ============================================================ */
+@media (max-width: 768px) {
+  .lp-hero__title {
+    font-size: 48px;
+    letter-spacing: 0.02em;
+  }
+  .lp-hero__cta {
+    width: 220px;
+    height: 64px;
+    font-size: 18px;
+  }
+  /* Hamburger visible */
+  .lp-nav__burger {
+    display: flex;
+  }
+  .lp-nav__links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.92);
+    padding: 24px 32px;
+    gap: 20px;
+  }
+  .lp-nav__links.is-open {
+    display: flex;
+  }
+  .lp-value {
+    padding: 48px 24px 0;
+  }
+  .lp-value__wide-img {
+    margin-left: -24px;
+  }
+  .lp-value__wide-img img,
+  .lp-value__wide-img-fallback {
+    width: 100vw;
+    height: 220px;
+  }
+  .lp-value__heading .line-standard {
+    font-size: 28px;
+  }
+  .lp-value__heading .line-script {
+    font-size: 48px;
+  }
+  .lp-disclaimer__text-side {
+    padding: 48px 24px;
+    align-items: center;
+    text-align: center;
+  }
+  .lp-disclaimer__body {
+    font-size: 18px;
+  }
+  .lp-disclaimer__heading {
+    font-size: 28px;
+  }
+  .lp-testimonials {
+    padding: 60px 24px 80px;
+  }
+  .lp-testimonials__inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .lp-testimonial-card {
+    max-width: 100%;
+    min-height: auto;
+  }
+  .lp-footer {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 24px;
+  }
+  .lp-footer__crisis {
+    text-align: center;
+  }
+  .lp-modes {
+    padding: 56px 24px;
+  }
+  .lp-modes__heading {
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+  .lp-modes__grid {
+    grid-template-columns: 1fr;
+  }
+  .lp-pricing {
+    padding: 56px 24px;
+  }
+  .lp-pricing__title {
+    font-size: 28px;
+  }
+  .lp-pricing__grid {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+  .lp-pricing-card {
+    padding: 36px 28px;
+  }
+}
+</style>
+{% endblock %}
+
+
+{# Override the full body — custom nav + no base footer #}
+{% block body %}
+<div class="lp-root">
+
+  <!-- ====================================================
+       SECTION 1 — NAVBAR (fixed, transparent → dark on scroll)
+       ==================================================== -->
+  <nav id="lp-nav" class="lp-nav" aria-label="Main navigation">
+    <a href="{{ url_for('api.index') }}" class="lp-nav__logo">123THERAPY</a>
+
+    <ul class="lp-nav__links" id="lp-nav-links" role="list">
+      <li><a href="#about">ABOUT</a></li>
+      <li><a href="#resources">RESOURCES</a></li>
+      <li><a href="#modes">MODES</a></li>
+      <li><a href="#pricing">PRICING</a></li>
+    </ul>
+
+    <button
+      class="lp-nav__burger"
+      id="lp-burger"
+      aria-label="Toggle navigation menu"
+      aria-expanded="false"
+      aria-controls="lp-nav-links"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+
+  <!-- ====================================================
+       SECTION 2 — HERO  (100vh, mountain lake bg)
+       ==================================================== -->
+  <section class="lp-hero" aria-label="Welcome">
+    <div
+      class="lp-hero__bg"
+      role="img"
+      aria-label="Serene mountain lake at dusk — still water reflecting forested peaks at blue hour"
+    ></div>
+
+    <div class="lp-hero__content">
+      <h1 class="lp-hero__title">123 Therapy</h1>
+      <a
+        href="{{ url_for('api.create_room_page') }}"
+        class="lp-hero__cta"
+        id="hero-cta"
+      >
+        GET STARTED
+      </a>
     </div>
-</section>
 
-<!-- How It Works Section -->
-<section id="about" class="py-20 bg-sand-light">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-            <h2 class="text-3xl sm:text-4xl font-semibold text-charcoal mb-4">How It Works</h2>
-            <p class="text-warm-gray max-w-2xl mx-auto">
-                A simple, private way to have meaningful conversations with your partner.
-            </p>
-        </div>
-
-        <div class="grid md:grid-cols-3 gap-8">
-            <!-- Step 1 -->
-            <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                <div class="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center mb-6">
-                    <span class="text-2xl font-semibold text-sage">1</span>
-                </div>
-                <h3 class="text-xl font-semibold text-charcoal mb-3">Create a Room</h3>
-                <p class="text-warm-gray">
-                    Start a new therapy session and receive a unique 6-digit code to share with your partner.
-                </p>
-            </div>
-
-            <!-- Step 2 -->
-            <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                <div class="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center mb-6">
-                    <span class="text-2xl font-semibold text-sage">2</span>
-                </div>
-                <h3 class="text-xl font-semibold text-charcoal mb-3">Connect Together</h3>
-                <p class="text-warm-gray">
-                    Your partner enters the code to join. Once both are connected, the session begins.
-                </p>
-            </div>
-
-            <!-- Step 3 -->
-            <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-md transition-shadow">
-                <div class="w-12 h-12 bg-sage/10 rounded-xl flex items-center justify-center mb-6">
-                    <span class="text-2xl font-semibold text-sage">3</span>
-                </div>
-                <h3 class="text-xl font-semibold text-charcoal mb-3">Guided Conversation</h3>
-                <p class="text-warm-gray">
-                    An AI therapist helps facilitate your discussion with thoughtful questions and guidance.
-                </p>
-            </div>
-        </div>
+    <!-- Mode selection panel — slides in from right on GET STARTED click -->
+    <div class="lp-hero__mode-panel" id="hero-mode-panel" aria-hidden="true">
+      <a href="{{ url_for('api.create_room_page') }}" class="lp-hero__mode-btn" id="mode-solo">Solo Mode</a>
+      <a href="{{ url_for('api.create_room_page') }}" class="lp-hero__mode-btn" id="mode-duo">Duo Mode</a>
+      <a href="{{ url_for('api.create_room_page') }}" class="lp-hero__mode-btn" id="mode-group">Group Mode</a>
     </div>
-</section>
+  </section>
 
-<!-- Features Section -->
-<section class="py-20">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
-                <h2 class="text-3xl sm:text-4xl font-semibold text-charcoal mb-6">
-                    Designed for
-                    <span class="text-sage">Meaningful</span>
-                    Conversations
-                </h2>
 
-                <div class="space-y-6">
-                    <!-- Feature 1 -->
-                    <div class="flex gap-4">
-                        <div class="flex-shrink-0 w-10 h-10 bg-sage/10 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-charcoal mb-1">Private & Secure</h4>
-                            <p class="text-warm-gray text-sm">No accounts required. Sessions are temporary and conversations aren't permanently stored.</p>
-                        </div>
-                    </div>
+  <!-- ====================================================
+       SECTION 3 — VALUE PROPOSITION (cream background)
+       ==================================================== -->
+  <section class="lp-value" id="about" aria-labelledby="lp-value-heading">
 
-                    <!-- Feature 2 -->
-                    <div class="flex gap-4">
-                        <div class="flex-shrink-0 w-10 h-10 bg-sage/10 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-charcoal mb-1">Empathetic AI Support</h4>
-                            <p class="text-warm-gray text-sm">Our AI therapist is trained to be neutral, supportive, and guide productive discussions.</p>
-                        </div>
-                    </div>
+    <!-- Left column: text + features -->
+    <div class="lp-value__text">
+      <h2 class="lp-value__heading" id="lp-value-heading">
+        <span class="line-standard">Designed for</span>
+        <span class="line-script" style="color: var(--color-brown);font-weight: bold;">Meaningful</span>
+        <span class="line-standard">Conversations.</span>
+      </h2>
 
-                    <!-- Feature 3 -->
-                    <div class="flex gap-4">
-                        <div class="flex-shrink-0 w-10 h-10 bg-sage/10 rounded-lg flex items-center justify-center">
-                            <svg class="w-5 h-5 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                            </svg>
-                        </div>
-                        <div>
-                            <h4 class="font-semibold text-charcoal mb-1">Crisis Support</h4>
-                            <p class="text-warm-gray text-sm">If serious issues are detected, we provide immediate resources and professional referrals.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="lp-value__features" role="list">
 
-            <!-- Illustration placeholder -->
-            <div class="hidden lg:block">
-                <div class="bg-gradient-to-br from-sage/20 to-sky-soft/20 rounded-3xl p-8 aspect-square flex items-center justify-center">
-                    <div class="text-center">
-                        <div class="w-32 h-32 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-lg">
-                            <svg class="w-16 h-16 text-sage" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                            </svg>
-                        </div>
-                        <p class="text-warm-gray">Real-time, guided conversations</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Disclaimer Banner -->
-<section id="resources" class="py-12 bg-crisis/10 border-y border-crisis/20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div class="flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-crisis mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        <div class="lp-value__feature reveal" data-delay="0" role="listitem">
+          <span class="lp-value__feature-icon" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
             </svg>
-            <h3 class="text-xl font-semibold text-charcoal">Important Disclaimer</h3>
+          </span>
+          <div class="lp-value__feature-body">
+            <p class="lp-value__feature-title">Private &amp; Secure</p>
+            <p class="lp-value__feature-desc">No accounts required. Sessions are temporary and conversations aren't permanently stored.</p>
+          </div>
         </div>
-        <p class="text-warm-gray max-w-2xl mx-auto">
-            123Therapy is <strong>not a replacement</strong> for professional mental health services.
-            This tool is designed to supplement, not replace, licensed therapy.
-            If you or your partner are experiencing a mental health emergency,
-            please contact emergency services (911) or a crisis hotline immediately.
-        </p>
-    </div>
-</section>
 
-<!-- Final CTA -->
-<section class="py-20">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-3xl sm:text-4xl font-semibold text-charcoal mb-6">
-            Ready to Start Talking?
-        </h2>
-        <p class="text-warm-gray mb-10 max-w-xl mx-auto">
-            Take the first step toward better communication with your partner.
-        </p>
-        <a href="{{ url_for('api.create_room_page') }}"
-           class="inline-flex items-center justify-center px-10 py-4 bg-sage text-white font-medium rounded-xl hover:bg-sage-dark transition-all transform hover:-translate-y-0.5 shadow-lg shadow-sage/25 text-lg">
-            Begin Your Session
-        </a>
+        <div class="lp-value__feature reveal" data-delay="150" role="listitem">
+          <span class="lp-value__feature-icon" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+            </svg>
+          </span>
+          <div class="lp-value__feature-body">
+            <p class="lp-value__feature-title">Empathetic AI Support</p>
+            <p class="lp-value__feature-desc">Our AI therapist is trained to be neutral, supportive, and guide productive discussions.</p>
+          </div>
+        </div>
+
+        <div class="lp-value__feature reveal" data-delay="300" role="listitem">
+          <span class="lp-value__feature-icon" aria-hidden="true">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+          </span>
+          <div class="lp-value__feature-body">
+            <p class="lp-value__feature-title">Crisis Support</p>
+            <p class="lp-value__feature-desc">If serious issues are detected, we provide immediate resources and professional referrals.</p>
+          </div>
+        </div>
+
+      </div>
     </div>
-</section>
+
+    <!-- Right column: portrait photo -->
+    <div class="lp-value__portrait" aria-hidden="true">
+      <img
+        src="{{ url_for('static', filename='images/therapist-portrait.jpg') }}"
+        alt="Thoughtful person holding glasses — calm, professional, reflective"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+      >
+      <div class="lp-value__portrait-fallback" style="display:none;"></div>
+    </div>
+
+    <!-- Bottom-left: wide landscape photo -->
+    
+
+  </section>
+
+
+  <!-- ====================================================
+       SECTION 4 — DISCLAIMER (split: video left / text right)
+       ==================================================== -->
+  <section class="lp-disclaimer" id="resources" aria-labelledby="lp-disclaimer-heading">
+
+    <!-- Left: ocean video -->
+    <div class="lp-disclaimer__video-side">
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        aria-hidden="true"
+        poster="{{ url_for('static', filename='images/ocean-fallback.jpg') }}"
+      >
+        <source src="{{ url_for('static', filename='videos/background-ocean.mp4') }}" type="video/mp4">
+      </video>
+      <!-- Cream panel that slides away on scroll to reveal the video -->
+      <div class="lp-disclaimer__video-cover" aria-hidden="true"></div>
+    </div>
+
+    <!-- Right: disclaimer text -->
+    <div class="lp-disclaimer__text-side">
+      <h2 class="lp-disclaimer__heading" id="lp-disclaimer-heading">
+        DISCLAIMER
+      </h2>
+      <p class="lp-disclaimer__body">
+        123Therapy is not a substitute for professional mental health care. Our AI is designed to support reflection and open conversation — not to diagnose, treat, or replace a licensed therapist. If you are in crisis or need clinical support, please contact a qualified mental health professional or call a crisis helpline.
+      </p>
+    </div>
+
+  </section>
+
+
+  <!-- ====================================================
+       SECTION 5 — MODES (Solo, Duo, Group)
+       ==================================================== -->
+  <section class="lp-modes" id="modes" aria-labelledby="lp-modes-heading">
+    <h2 class="lp-modes__heading reveal" id="lp-modes-heading">
+      Choose Your <span>Session Mode</span>
+    </h2>
+
+    <div class="lp-modes__grid">
+
+      <!-- Solo Mode -->
+      <div class="lp-mode-card">
+        <div class="lp-mode-card__icon" aria-hidden="true">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+          </svg>
+        </div>
+        <span class="lp-mode-card__badge">Free</span>
+        <h3 class="lp-mode-card__title" style="font-family: 'Italianno', cursive; font-size: 32px; font-weight: 400; font-style: italic;">Solo Mode</h3>
+        <p class="lp-mode-card__desc">A private space to reflect, process, and talk through what's on your mind — just you and the AI. No account needed, no pressure.</p>
+      </div>
+
+      <!-- Duo Mode -->
+      <div class="lp-mode-card">
+        <div class="lp-mode-card__icon lp-mode-card__icon--pro" aria-hidden="true">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
+          </svg>
+        </div>
+        <span class="lp-mode-card__badge lp-mode-card__badge--pro">Pro</span>
+        <h3 class="lp-mode-card__title" style="font-family: 'Italianno', cursive; font-size: 32px; font-weight: 400; font-style: italic;">Duo Mode</h3>
+        <p class="lp-mode-card__desc">A mediated space for two — couples, friends, or colleagues. The AI facilitates a structured, neutral conversation to help you truly hear each other.</p>
+      </div>
+
+      <!-- Group Mode -->
+      <div class="lp-mode-card">
+        <div class="lp-mode-card__icon lp-mode-card__icon--pro" aria-hidden="true">
+          <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+        </div>
+        <span class="lp-mode-card__badge lp-mode-card__badge--pro">Pro</span>
+        <h3 class="lp-mode-card__title" style="font-family: 'Italianno', cursive; font-size: 32px; font-weight: 400; font-style: italic;">Group Mode</h3>
+        <p class="lp-mode-card__desc">Guided group sessions for families, teams, or support circles. The AI keeps the conversation constructive and ensures every voice is heard.</p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ====================================================
+       SECTION 5.5 — TRANSITION PARALLAX
+       ==================================================== -->
+
+
+  <!-- ====================================================
+       SECTION 6 — PRICING
+       ==================================================== -->
+  <section class="lp-pricing" id="pricing" aria-labelledby="lp-pricing-heading">
+
+    <div class="lp-pricing__header reveal">
+      <h2 class="lp-pricing__title" id="lp-pricing-heading">Simple Pricing</h2>
+      <p class="lp-pricing__subtitle">Start free. Upgrade when you're ready.</p>
+    </div>
+
+    <div class="lp-pricing__grid">
+
+      <!-- Free Card -->
+      <div class="lp-pricing-card lp-pricing-card--free">
+        <p class="lp-pricing-card__tier">Free</p>
+        <p class="lp-pricing-card__price">$0</p>
+        <p class="lp-pricing-card__period">No credit card required</p>
+        <hr class="lp-pricing-card__divider">
+        <ul class="lp-pricing-card__features" role="list">
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            Access to Solo Mode
+          </li>
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            2 sessions per week
+          </li>
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            90 minutes per session
+          </li>
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            No account needed
+          </li>
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            Download conversation as PDF
+          </li>
+          <p class="lp-pricing-card__note">$2 per PDF download at checkout</p>
+        </ul>
+        <a href="{{ url_for('api.create_room_page') }}" class="lp-pricing-card__cta">Get Started Free</a>
+      </div>
+
+      <!-- Pro Card -->
+      <div class="lp-pricing-card lp-pricing-card--pro">
+        <p class="lp-pricing-card__tier">Pro</p>
+        <p class="lp-pricing-card__price">$9.99</p>
+        <p class="lp-pricing-card__period">per month</p>
+        <hr class="lp-pricing-card__divider">
+        <ul class="lp-pricing-card__features" role="list">
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            Access to Solo, Duo &amp; Group Mode
+          </li>
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            Unlimited sessions
+          </li>
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            No time limits
+          </li>
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            Session history &amp; AI summaries
+          </li>
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            Priority AI response speed
+          </li>
+          <li class="lp-pricing-card__feature">
+            <svg class="lp-pricing-card__check" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+            Free PDF downloads — unlimited
+          </li>
+        </ul>
+        <a href="{{ url_for('api.create_room_page') }}" class="lp-pricing-card__cta">Start Pro</a>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ====================================================
+       SECTION 6 — TESTIMONIALS (over ocean video background)
+       ==================================================== -->
+  <section class="lp-testimonials" aria-labelledby="lp-testimonials-heading">
+
+    <!-- Shared ocean video background -->
+    <div class="lp-testimonials__video-bg" aria-hidden="true">
+      <video
+        autoplay
+        muted
+        loop
+        playsinline
+        aria-hidden="true"
+        poster="{{ url_for('static', filename='images/ocean-fallback.jpg') }}"
+      >
+        <source src="{{ url_for('static', filename='videos/background-ocean.mp4') }}" type="video/mp4">
+      </video>
+    </div>
+
+    <h2 id="lp-testimonials-heading" class="sr-only">User Feedback</h2>
+
+    <div class="lp-testimonials__inner">
+
+      <!-- Card 1 — Maya -->
+      <div class="lp-testimonial-group">
+<article class="lp-testimonial-card reveal" data-delay="0" aria-label="Testimonial from Maya">
+          <img
+            class="lp-testimonial-card__photo"
+            src="{{ url_for('static', filename='images/testimonial-maya.jpg') }}"
+            alt="Maya, 26"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+          >
+          <div class="lp-testimonial-card__photo-fallback" style="display:none;" aria-hidden="true"></div>
+          <blockquote class="lp-testimonial-card__quote">
+            "I wasn't ready to see a therapist yet. 123Therapy gave me a safe space to just… think out loud. It helped me understand what I was actually feeling."
+          </blockquote>
+          <p class="lp-testimonial-card__attribution">— Maya, 26</p>
+        </article>
+      </div>
+
+      <!-- Card 2 — Nala -->
+      <div class="lp-testimonial-group">
+<article class="lp-testimonial-card reveal" data-delay="100" aria-label="Testimonial from Nala">
+          <img
+            class="lp-testimonial-card__photo"
+            src="{{ url_for('static', filename='images/testimonial-nala.jpg') }}"
+            alt="Nala, 21"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+          >
+          <div class="lp-testimonial-card__photo-fallback" style="display:none;" aria-hidden="true"></div>
+          <blockquote class="lp-testimonial-card__quote">
+            "I discovered it through my university. It's become part of how I decompress during exam season. No judgment, no waiting list."
+          </blockquote>
+          <p class="lp-testimonial-card__attribution">— Nala, 21</p>
+        </article>
+      </div>
+
+      <!-- Card 3 — James & Priya -->
+      <div class="lp-testimonial-group">
+<article class="lp-testimonial-card reveal" data-delay="200" aria-label="Testimonial from James and Priya">
+          <img
+            class="lp-testimonial-card__photo"
+            src="{{ url_for('static', filename='images/testimonial-james.jpg') }}"
+            alt="James, smiling"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+          >
+          <div class="lp-testimonial-card__photo-fallback" style="display:none;" aria-hidden="true"></div>
+          <blockquote class="lp-testimonial-card__quote">
+            "My partner and I used it before a difficult conversation. Having a neutral space made all the difference. We actually listened to each other."
+          </blockquote>
+          <p class="lp-testimonial-card__attribution">— James &amp; Priya</p>
+        </article>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ====================================================
+       FOOTER
+       ==================================================== -->
+  <footer class="lp-footer" aria-label="Site footer">
+    <span class="lp-footer__brand">123THERAPY</span>
+    <p class="lp-footer__copy">&copy; 2026 123Therapy. Not a replacement for professional care.</p>
+    <div class="lp-footer__crisis">
+      Crisis line: <strong>988</strong>&nbsp;&nbsp;|&nbsp;&nbsp;Text <strong>HOME</strong> to 741741
+    </div>
+  </footer>
+
+</div><!-- /.lp-root -->
+
+
+<!-- Visually-hidden utility (for sr-only heading) -->
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>
+
+<script>
+  /* ============================================================
+     NAVBAR — darken on scroll past 80px
+     ============================================================ */
+  const lpNav = document.getElementById('lp-nav');
+  window.addEventListener('scroll', () => {
+    lpNav.classList.toggle('scrolled', window.scrollY > 80);
+  }, { passive: true });
+
+  /* ============================================================
+     HAMBURGER — mobile nav toggle
+     ============================================================ */
+  const lpBurger  = document.getElementById('lp-burger');
+  const lpNavLinks = document.getElementById('lp-nav-links');
+
+  lpBurger.addEventListener('click', () => {
+    const isOpen = lpNavLinks.classList.toggle('is-open');
+    lpBurger.setAttribute('aria-expanded', String(isOpen));
+  });
+
+  /* ============================================================
+     SCROLL-TRIGGERED REVEALS
+     Uses IntersectionObserver; respects data-delay (ms)
+     ============================================================ */
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el    = entry.target;
+      const delay = parseInt(el.dataset.delay || '0', 10);
+      setTimeout(() => el.classList.add('is-visible'), delay);
+      revealObserver.unobserve(el);
+    });
+  }, {
+    threshold: 0.15,
+    rootMargin: '0px 0px -40px 0px'
+  });
+
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+  /* ============================================================
+     SMOOTH SCROLL — anchor <a href="#..."> links
+     ============================================================ */
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', e => {
+      const target = document.querySelector(anchor.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      lpNavLinks.classList.remove('is-open');
+      lpBurger.setAttribute('aria-expanded', 'false');
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* ============================================================
+     HERO — GET STARTED click: morph → travel → mode reveal
+     ============================================================ */
+  const heroCta  = document.getElementById('hero-cta');
+  const modePanel = document.getElementById('hero-mode-panel');
+  const soloBtnEl  = document.getElementById('mode-solo');
+  const duoBtnEl   = document.getElementById('mode-duo');
+  const groupBtnEl = document.getElementById('mode-group');
+
+  if (heroCta && modePanel) {
+    heroCta.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      // Kill CSS animations so GSAP takes full control
+      heroCta.style.animation = 'none';
+      heroCta.style.transition = 'none';
+      const heroTitle = document.querySelector('.lp-hero__title');
+      heroTitle.style.animation = 'none'; // clear forwards fill so GSAP owns opacity
+
+      // Calculate Solo button's final on-screen centre
+      // (panel is 40vw wide, buttons stack 81px × 3 + 28px gap × 2 = 299px total)
+      const BH = 81, GAP = 28;
+      const stackH = 3 * BH + 2 * GAP;                      // 299
+      const soloCenterX = window.innerWidth  * 0.8;          // centre of right 40%
+      const soloCenterY = window.innerHeight / 2 - (stackH / 2) + (BH / 2); // top of stack + half btn
+
+      const ctaRect    = heroCta.getBoundingClientRect();
+      const ctaCenterX = ctaRect.left + ctaRect.width  / 2;
+      const ctaCenterY = ctaRect.top  + ctaRect.height / 2;
+
+      const dx = soloCenterX - ctaCenterX;
+      const dy = soloCenterY - ctaCenterY;
+
+      const tl = gsap.timeline();
+
+      // 1. CTA collapses into a white circle
+      tl.to(heroCta, {
+        width: 81, height: 81,
+        borderRadius: '50%',
+        backgroundColor: '#ffffff',
+        color: 'transparent',
+        fontSize: 0,
+        letterSpacing: 0,
+        duration: 0.35,
+        ease: 'power2.inOut'
+      })
+
+      // 2a. Hero bg clips right-to-left: 100% → 60%  (runs in parallel from t=0)
+      .fromTo('.lp-hero__bg', {
+        clipPath: 'inset(0 0% 0 0)'
+      }, {
+        clipPath: 'inset(0 40% 0 0)',
+        duration: 0.7,
+        ease: 'power2.inOut'
+      }, 0)
+
+      // 2b. Title fades out, repositions to centre of left 60%, fades back in
+      .to(heroTitle, {
+        opacity: 0,
+        duration: 0.25,
+        ease: 'power2.out'
+      }, 0)
+      .set(heroTitle, { x: '-20vw' }, 0.35)
+      .to(heroTitle, {
+        opacity: 1,
+        duration: 0.4,
+        ease: 'power2.in'
+      }, 0.45)
+
+      // 2c. Brown panel slides in from the right  (parallel, slight delay)
+      .to(modePanel, {
+        xPercent: 0,
+        duration: 0.65,
+        ease: 'power2.inOut'
+      }, 0.1)
+
+      // 3. White circle travels to Solo button destination
+      .to(heroCta, {
+        x: dx, y: dy,
+        duration: 0.5,
+        ease: 'power2.inOut'
+      }, 0.35)
+
+      // 4. Circle shrinks away at landing spot
+      .to(heroCta, {
+        scale: 0.3, opacity: 0,
+        duration: 0.2,
+        ease: 'power2.in'
+      }, 0.8)
+
+      // 5. Solo bursts into existence where the circle vanished
+      .fromTo(soloBtnEl, {
+        opacity: 0, scale: 0.5
+      }, {
+        opacity: 1, scale: 1,
+        duration: 0.32,
+        ease: 'back.out(1.8)'
+      }, 0.9)
+
+      // 6. Duo slides down from Solo's position into its own slot
+      .fromTo(duoBtnEl, {
+        opacity: 0, y: -(BH + GAP)
+      }, {
+        opacity: 1, y: 0,
+        duration: 0.35,
+        ease: 'power2.out'
+      }, 1.05)
+
+      // 7. Group slides down from Solo's position into its (lower) slot
+      .fromTo(groupBtnEl, {
+        opacity: 0, y: -(BH + GAP) * 2
+      }, {
+        opacity: 1, y: 0,
+        duration: 0.35,
+        ease: 'power2.out'
+      }, 1.18);
+    });
+  }
+</script>
+
+<script>
+/* ============================================================
+   GSAP SCROLL ANIMATIONS
+   Runs after GSAP + ScrollTrigger have loaded (deferred)
+   ============================================================ */
+window.addEventListener('load', () => {
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+  // Force top-of-page so ScrollTrigger calculates positions correctly
+  // regardless of browser scroll-restoration from cache
+  window.scrollTo(0, 0);
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Push mode panel fully off-screen so GSAP owns the transform
+  gsap.set('#hero-mode-panel', { xPercent: 100 });
+
+  /* ── 1. HERO → VALUE: Parallax sticky ────────────────────
+     Hero stays pinned; value section scrolls over the top.
+     The hero background drifts upward at a slower rate,
+     and the hero content fades out as it's eclipsed.
+  ─────────────────────────────────────────────────────────── */
+
+  // Pin the hero so the value section slides over it
+  ScrollTrigger.create({
+    trigger: '.lp-hero',
+    start: 'top top',
+    end: 'bottom top',
+    pin: true,
+    pinSpacing: false
+  });
+
+  // Hero background moves at ~30% of scroll speed (parallax depth)
+  gsap.to('.lp-hero__bg', {
+    yPercent: 28,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.lp-hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+
+  // Hero title + CTA fade out and lift as value slides over
+  gsap.to('.lp-hero__content', {
+    opacity: 0,
+    y: -52,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.lp-hero',
+      start: '30% top',
+      end: '80% top',
+      scrub: true
+    }
+  });
+
+  /* ── 2. DISCLAIMER: Cream panel reveal ───────────────────
+     The cream cover starts full-width (hiding the video).
+     As user scrolls into the section, the cover scales
+     down from left to right, revealing the ocean video.
+     Once the video is mostly visible, the text fades in.
+  ─────────────────────────────────────────────────────────── */
+
+  const disclaimerTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.lp-disclaimer',
+      start: 'top 80%',
+      end: 'top 10%',
+      scrub: 1.2
+    }
+  });
+
+  disclaimerTl
+    // Cover shrinks from left → right, revealing the video
+    .to('.lp-disclaimer__video-cover', {
+      scaleX: 0,
+      ease: 'power2.inOut',
+      duration: 1
+    })
+    // Heading slides in from the right
+    .fromTo('.lp-disclaimer__heading', {
+      opacity: 0,
+      x: 36
+    }, {
+      opacity: 1,
+      x: 0,
+      ease: 'power2.out',
+      duration: 0.45
+    }, '-=0.35')
+    // Body follows the heading
+    .fromTo('.lp-disclaimer__body', {
+      opacity: 0,
+      x: 36
+    }, {
+      opacity: 1,
+      x: 0,
+      ease: 'power2.out',
+      duration: 0.45
+    }, '-=0.28');
+
+  /* ── 3. MODES → PRICING: Sticky parallax overlap ─────────
+     Modes section stays pinned while pricing slides up over
+     it. The modes content gently scales down and fades as
+     it is eclipsed — same mechanic as hero → value.
+  ─────────────────────────────────────────────────────────── */
+
+  ScrollTrigger.create({
+    trigger: '.lp-modes',
+    start: 'top top',
+    end: 'bottom top',
+    pin: true,
+    pinSpacing: false
+  });
+
+  // Modes content dims and shrinks slightly as pricing covers it
+  gsap.to('.lp-modes__heading, .lp-modes__grid', {
+    opacity: 0,
+    scale: 0.94,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '.lp-modes',
+      start: '40% top',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+
+  /* ── 4. MODES: Scroll-triggered fade-ins ──────────────────
+     Cards fade in as they scroll into view.
+  ─────────────────────────────────────────────────────────── */
+
+  gsap.utils.toArray('.lp-mode-card').forEach((card, i) => {
+    gsap.fromTo(card, {
+      opacity: 0,
+      y: 50
+    }, {
+      opacity: 1,
+      y: 0,
+      ease: 'power2.out',
+      scrollTrigger: {
+        trigger: card,
+        start: 'top 85%',
+        end: 'bottom 70%',
+        scrub: false
+      }
+    });
+  });
+
+  /* ── 5. PRICING: Scrub-driven reveal (like disclaimer) ────
+     Header fades in first, then free card slides from left
+     and pro card from the right, all tied to scroll position.
+  ─────────────────────────────────────────────────────────── */
+
+  const pricingTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.lp-pricing',
+      start: 'top 78%',
+      end: 'top 15%',
+      scrub: 1.2
+    }
+  });
+
+  pricingTl
+    .fromTo('.lp-pricing__header', {
+      opacity: 0,
+      y: 32
+    }, {
+      opacity: 1,
+      y: 0,
+      ease: 'power2.out',
+      duration: 0.4
+    })
+    .fromTo('.lp-pricing-card--free', {
+      opacity: 0,
+      x: -48
+    }, {
+      opacity: 1,
+      x: 0,
+      ease: 'power2.out',
+      duration: 0.5
+    }, '-=0.2')
+    .fromTo('.lp-pricing-card--pro', {
+      opacity: 0,
+      x: 48
+    }, {
+      opacity: 1,
+      x: 0,
+      ease: 'power2.out',
+      duration: 0.5
+    }, '-=0.4');
+
+  // Recalculate all ScrollTrigger positions after full init
+  // (guards against font/image layout shifts changing element heights)
+  ScrollTrigger.refresh();
+
+});
+</script>
 {% endblock %}
