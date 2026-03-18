@@ -7,8 +7,17 @@ from typing import Optional
 
 class ParticipantRole(Enum):
     """Role of a participant in a therapy room."""
+    #solo role for individual therapy sessions
+    SOLO = "solo"
+    #duo roles for partner therapy sessions
     PARTNER_A = "partner_a"
     PARTNER_B = "partner_b"
+    #group role for group therapy sessions
+    MEMBER_A = "member_a"
+    MEMBER_B = "member_b"
+    MEMBER_C = "member_c"  
+    MEMBER_D = "member_d"
+    
 
 
 @dataclass

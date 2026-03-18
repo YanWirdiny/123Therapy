@@ -8,7 +8,18 @@ import string
 
 from app.models.participant import Participant, ParticipantRole
 
+class RoomMode(Enum):
+    """Mode of a therapy room."""
+    SOLO = "solo"
+    DUO = "duo"
+    GROUP = "group"
 
+class RelationshipType(Enum):
+    """Type of relationship for therapy sessions."""
+    COUPLE = "couple"
+    FAMILY = "family"   
+    FRIENDS = "friends"
+    OTHER = "other"
 class RoomStatus(Enum):
     """Status of a therapy room."""
     ACTIVE = "active"
@@ -42,15 +53,20 @@ class Room:
     """Represents a therapy room for a couple."""
 
     room_code: str
+    mode: RoomMode = RoomMode.DUO
+    relationship_type: Optional[RelationshipType] = None
     status: RoomStatus = RoomStatus.ACTIVE
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     participants: List[Participant] = field(default_factory=list)
     messages: List[Message] = field(default_factory=list)
     crisis_detected: bool = False
     crisis_category: Optional[str] = None
 
-    MAX_PARTICIPANTS = 2
     CODE_LENGTH = 6
+
+    def __post_init__(self):
+        capacity = {RoomMode.SOLO: 1, RoomMode.DUO: 2, RoomMode.GROUP: 4}
+        self.max_participants: int = capacity[self.mode]
 
     @classmethod
     def generate_room_code(cls) -> str:
@@ -64,7 +80,7 @@ class Room:
 
     def is_full(self) -> bool:
         """Check if room has reached maximum participants."""
-        return len(self.participants) >= self.MAX_PARTICIPANTS
+        return len(self.participants) >= self.max_participants
 
     def is_active(self) -> bool:
         """Check if room is currently active."""
@@ -74,7 +90,7 @@ class Room:
         """Check if room has exceeded timeout period."""
         if self.status == RoomStatus.EXPIRED:
             return True
-        elapsed = (datetime.utcnow() - self.created_at).total_seconds()
+        elapsed = (datetime.now(timezone.utc) - self.created_at).total_seconds()
         return elapsed > (timeout_hours * 3600)
 
     def add_participant(self, user_id: str, socket_id: str) -> Optional[Participant]:
@@ -82,8 +98,20 @@ class Room:
         if self.is_full():
             return None
 
-        # Determine role based on join order
-        role = ParticipantRole.PARTNER_A if len(self.participants) == 0 else ParticipantRole.PARTNER_B
+        index = len(self.participants)
+
+        if self.mode == RoomMode.SOLO:
+            role = ParticipantRole.SOLO
+        elif self.mode == RoomMode.DUO:
+            role = ParticipantRole.PARTNER_A if index == 0 else ParticipantRole.PARTNER_B
+        else:  # GROUP
+            group_roles = [
+                ParticipantRole.MEMBER_A,
+                ParticipantRole.MEMBER_B,
+                ParticipantRole.MEMBER_C,
+                ParticipantRole.MEMBER_D,
+            ]
+            role = group_roles[index]
 
         participant = Participant(
             user_id=user_id,
@@ -130,9 +158,18 @@ class Room:
         """Get number of currently connected participants."""
         return sum(1 for p in self.participants if p.is_connected)
 
+    def is_session_ready(self) -> bool:
+        """Check if enough participants are connected to begin the session."""
+        if self.mode == RoomMode.SOLO:
+            return self.get_connected_count() >= 1
+        elif self.mode == RoomMode.DUO:
+            return self.get_connected_count() >= 2
+        else:  # GROUP
+            return self.get_connected_count() >= 2
+
     def both_connected(self) -> bool:
-        """Check if both partners are currently connected."""
-        return self.get_connected_count() == self.MAX_PARTICIPANTS
+        """Deprecated: use is_session_ready() instead."""
+        return self.is_session_ready()
 
     def close(self) -> None:
         """Close the room."""
